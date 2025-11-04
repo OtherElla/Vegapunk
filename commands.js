@@ -1,48 +1,31 @@
 import 'dotenv/config';
-import { getRPSChoices } from './game.js';
 import { capitalize, InstallGlobalCommands } from './utils.js';
 import { getJobKeys } from './filler_worker.js';
 
-// Get the game choices from game.js
-function createCommandChoices() {
-  const choices = getRPSChoices();
-  const commandChoices = [];
-
-  for (let choice of choices) {
-    commandChoices.push({
-      name: capitalize(choice),
-      value: choice.toLowerCase(),
-    });
-  }
-
-  return commandChoices;
-}
-
-// Simple test command
-const TEST_COMMAND = {
-  name: 'test',
-  description: 'Basic command',
-  type: 1,
-  integration_types: [0, 1],
-  contexts: [0, 1, 2],
-};
-
-// Command containing options
-const CHALLENGE_COMMAND = {
-  name: 'challenge',
-  description: 'Challenge to a match of rock paper scissors',
+// Technique command
+const TECHNIQUE_COMMAND = {
+  name: 'technique',
+  description: 'Search and display martial techniques',
   options: [
     {
       type: 3,
-      name: 'object',
-      description: 'Pick your object',
+      name: 'action',
+      description: 'Action to perform (technique name, list, or summary)',
       required: true,
-      choices: createCommandChoices(),
     },
+    {
+      type: 3,
+      name: 'source',
+      description: 'Source filter for list command or tier for technique search',
+      required: false,
+    },
+    {
+      type: 3,
+      name: 'name',
+      description: 'Technique name when searching with tier',
+      required: false,
+    }
   ],
-  type: 1,
-  integration_types: [0, 1],
-  contexts: [0, 2],
 };
 
 // Add the filler command registration
@@ -78,6 +61,23 @@ const FILLER_COMMAND = {
   contexts: [0, 1, 2]
 };
 
-const ALL_COMMANDS = [TEST_COMMAND, CHALLENGE_COMMAND, FILLER_COMMAND];
+// Condition command
+const CONDITION_COMMAND = {
+  name: 'condition',
+  description: 'Look up game condition details',
+  options: [
+    {
+      type: 3,
+      name: 'name',
+      description: 'Condition name',
+      required: true
+    }
+  ],
+  type: 1,
+  integration_types: [0, 1],
+  contexts: [0, 1, 2]
+};
+
+const ALL_COMMANDS = [FILLER_COMMAND, TECHNIQUE_COMMAND, CONDITION_COMMAND];
 
 InstallGlobalCommands(process.env.APP_ID, ALL_COMMANDS);
